@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "FoscamFix": {
+      "commandName": "Project"
+    },
+    "WSL 2": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "DockerfileRunArguments": "-v  C:/Users/Robbe/Documents/Git/FoscamFix/boomhut-source:/cameras/boomhut-source -v  C:/Users/Robbe/Documents/Git/FoscamFix/boomhut-destination:/cameras/boomhut-destination -v  C:/Users/Robbe/Documents/Git/FoscamFix/garage-source:/cameras/garage-source -v  C:/Users/Robbe/Documents/Git/FoscamFix/garage-destination:/cameras/garage-destination"
+    }
+  }
+}

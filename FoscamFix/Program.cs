@@ -9,6 +9,7 @@ namespace FoscamFix
 {
     class Program
     {
+        private static Logger _logger = new Logger("/logs");
         static void Main(string[] args)
         {
             var boomhutSource = "/cameras/boomhut-source";
@@ -40,7 +41,7 @@ namespace FoscamFix
             {
                 if (!Directory.Exists(source))
                 {
-                    Console.WriteLine($"{source} does not exist. Skipped.");
+                    _logger.Log($"{source} does not exist. Skipped.");
                     return;
                 }
 
@@ -55,7 +56,7 @@ namespace FoscamFix
 
                 foreach (var group in sourceFiles)
                 {
-                    Console.WriteLine($"Moving files from {group.Key}");
+                    _logger.Log($"Moving files from {group.Key}");
                     var date = DateTime.ParseExact(group.Key, "yyyyMMdd", CultureInfo.InvariantCulture);
                     var groupDestination = Path.Combine(destination, date.ToString("yyyy-MM-dd"));
                     Directory.CreateDirectory(groupDestination);
@@ -68,19 +69,19 @@ namespace FoscamFix
                                 groupDestination,
                                 TrimFoscamPrefix(Path.GetFileName(file.FileName)));
 
-                            Console.WriteLine($"Moving {file.FileName} to {destinationFileName}");
+                            _logger.Log($"Moving {file.FileName} to {destinationFileName}");
                             File.Move(file.FileName, destinationFileName, true);
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.Message);
+                            _logger.Log(e.Message);
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                _logger.Log(e.Message);
             }
         }
         

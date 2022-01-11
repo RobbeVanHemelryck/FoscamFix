@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "plRnEM195YfZbQS9e0I/XZA+smBbrimz4e2kTPFrSVpj9S6HKYQzhsd2YTkX3SSxOQS9VcJwNIWS02fQrvJWMw==",
+  "dgSpecHash": "4VcL/dBrwZdcXHmImtZkFMAy60jyd4x2IC8IqhuXIJZd2KsEBxFfqtGfWB/LAM/m//0p/ay07nMhavkD6LfrWA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Robbe\\Documents\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\FoscamFix.csproj",
+  "projectFilePath": "C:\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\FoscamFix.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Robbe\\.nuget\\packages\\microsoft.extensions.configuration\\6.0.0\\microsoft.extensions.configuration.6.0.0.nupkg.sha512",
     "C:\\Users\\Robbe\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\6.0.0\\microsoft.extensions.configuration.abstractions.6.0.0.nupkg.sha512",

@@ -576,11 +576,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Robbe\\Documents\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\FoscamFix.csproj",
+      "projectUniqueName": "C:\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\FoscamFix.csproj",
       "projectName": "FoscamFix",
-      "projectPath": "C:\\Users\\Robbe\\Documents\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\FoscamFix.csproj",
+      "projectPath": "C:\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\FoscamFix.csproj",
       "packagesPath": "C:\\Users\\Robbe\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Robbe\\Documents\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\obj\\",
+      "outputPath": "C:\\Git\\FoscamFix\\FoscamFix\\FoscamFix\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

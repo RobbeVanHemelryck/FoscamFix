@@ -5,10 +5,10 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["FoscamFix.csproj", "FoscamFix/"]
+COPY ["FoscamFix.csproj", "."]
 RUN dotnet restore "FoscamFix.csproj"
 COPY . .
-WORKDIR "/src/FoscamFix"
+WORKDIR "/src"
 RUN dotnet build "FoscamFix.csproj" -c Release -o /app/build
 
 FROM build AS publish

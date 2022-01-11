@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace FoscamFix
 {
@@ -10,14 +11,10 @@ namespace FoscamFix
     {
         static void Main(string[] args)
         {
-            //var boomhutSource = "/cameras/boomhut-source";
-            //var boomhutDestination = "/cameras/boomhut-destination";
-            //var garageSource = "/cameras/garage-source";
-            //var garageDestination = "/cameras/garage-destination";
-            var boomhutSource = @"C:\Users\Robbe\Documents\Git\FoscamFix\boomhut-source";
-            var boomhutDestination = @"C:\Users\Robbe\Documents\Git\FoscamFix\boomhut-destination";
-            var garageSource = @"C:\Users\Robbe\Documents\Git\FoscamFix\garage-source";
-            var garageDestination = @"C:\Users\Robbe\Documents\Git\FoscamFix\garage-destination";
+            var boomhutSource = "/cameras/boomhut-source";
+            var boomhutDestination = "/cameras/boomhut-destination";
+            var garageSource = "/cameras/garage-source";
+            var garageDestination = "/cameras/garage-destination";
 
             var boomhutSourceSnap = Path.Combine(boomhutSource, "snap");
             var boomhutDestinationSnap = Path.Combine(boomhutDestination, "Snaps");
@@ -39,27 +36,59 @@ namespace FoscamFix
             string source,
             string destination)
         {
-            var sourceFiles = Directory.GetFiles(source)
-                .Select(x => new
-                {
-                    DateString = Path.GetFileNameWithoutExtension(x).Substring(8, 8),
-                    FileName = x
-                })
-                .GroupBy(x => x.DateString)
-                .ToList();
-
-            foreach (var group in sourceFiles)
+            try
             {
-                var date = DateTime.ParseExact(group.Key, "yyyyMMdd", CultureInfo.InvariantCulture);
-                var groupDestination = Path.Combine(destination, date.ToString("yyyy-MM-dd"));
-                Directory.CreateDirectory(groupDestination);
-
-                foreach (var file in group)
+                if (!Directory.Exists(source))
                 {
-                    var destinationFileName = Path.Combine(groupDestination, Path.GetFileName(file.FileName).Substring(8));
-                    File.Move(file.FileName, destinationFileName);
+                    Console.WriteLine($"{source} does not exist. Skipped.");
+                    return;
+                }
+
+                var sourceFiles = Directory.GetFiles(source)
+                    .Select(x => new
+                    {
+                        DateString = RemoveFileNamePrefix(Path.GetFileNameWithoutExtension(x)).Substring(0, "yyyyMMdd".Length),
+                        FileName = x
+                    })
+                    .GroupBy(x => x.DateString)
+                    .ToList();
+
+                foreach (var group in sourceFiles)
+                {
+                    Console.WriteLine($"Moving files from {group.Key}");
+                    var date = DateTime.ParseExact(group.Key, "yyyyMMdd", CultureInfo.InvariantCulture);
+                    var groupDestination = Path.Combine(destination, date.ToString("yyyy-MM-dd"));
+                    Directory.CreateDirectory(groupDestination);
+
+                    try
+                    {
+                        foreach (var file in group)
+                        {
+                            var destinationFileName = Path.Combine(
+                                groupDestination,
+                                RemoveFileNamePrefix(Path.GetFileName(file.FileName)));
+
+                            Console.WriteLine($"Moving {file.FileName} to {destinationFileName}");
+                            File.Move(file.FileName, destinationFileName);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+        
+        private static string RemoveFileNamePrefix(string fileName)
+        {
+            return fileName
+                .Replace("MDalarm_", "")
+                .Replace("Schedule_", "");
         }
     }
 }

@@ -47,7 +47,7 @@ namespace FoscamFix
                 var sourceFiles = Directory.GetFiles(source)
                     .Select(x => new
                     {
-                        DateString = RemoveFileNamePrefix(Path.GetFileNameWithoutExtension(x)).Substring(0, "yyyyMMdd".Length),
+                        DateString = TrimFoscamPrefix(Path.GetFileNameWithoutExtension(x)).Substring(0, "yyyyMMdd".Length),
                         FileName = x
                     })
                     .GroupBy(x => x.DateString)
@@ -60,21 +60,21 @@ namespace FoscamFix
                     var groupDestination = Path.Combine(destination, date.ToString("yyyy-MM-dd"));
                     Directory.CreateDirectory(groupDestination);
 
-                    try
+                    foreach (var file in group)
                     {
-                        foreach (var file in group)
+                        try
                         {
                             var destinationFileName = Path.Combine(
                                 groupDestination,
-                                RemoveFileNamePrefix(Path.GetFileName(file.FileName)));
+                                TrimFoscamPrefix(Path.GetFileName(file.FileName)));
 
                             Console.WriteLine($"Moving {file.FileName} to {destinationFileName}");
-                            File.Move(file.FileName, destinationFileName);
+                            File.Move(file.FileName, destinationFileName, true);
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
                     }
                 }
             }
@@ -84,9 +84,10 @@ namespace FoscamFix
             }
         }
         
-        private static string RemoveFileNamePrefix(string fileName)
+        private static string TrimFoscamPrefix(string fileName)
         {
             return fileName
+                .Replace("MDAlarm_", "")
                 .Replace("MDalarm_", "")
                 .Replace("Schedule_", "");
         }

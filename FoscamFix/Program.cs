@@ -27,10 +27,13 @@ namespace FoscamFix
             var garageSourceRecordings = Path.Combine(garageSource, "record");
             var garageDestinationRecordings = Path.Combine(garageDestination, "Videos");
 
-            MoveFiles(boomhutSourceSnap, boomhutDestinationSnap);
-            MoveFiles(boomhutSourceRecordings, boomhutDestinationRecordings);
-            MoveFiles(garageSourceSnap, garageDestinationSnap);
-            MoveFiles(garageSourceRecordings, garageDestinationRecordings);
+            while (true)
+            {
+                MoveFiles(boomhutSourceSnap, boomhutDestinationSnap);
+                MoveFiles(boomhutSourceRecordings, boomhutDestinationRecordings);
+                MoveFiles(garageSourceSnap, garageDestinationSnap);
+                MoveFiles(garageSourceRecordings, garageDestinationRecordings);
+            }
         }
 
         private static void MoveFiles(

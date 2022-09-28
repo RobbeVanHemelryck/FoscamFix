@@ -4,13 +4,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FoscamFix
 {
     class Program
     {
         private static Logger _logger = new Logger("/logs");
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var boomhutSource = "/cameras/boomhut-source";
             var boomhutDestination = "/cameras/boomhut-destination";
@@ -29,10 +30,12 @@ namespace FoscamFix
 
             while (true)
             {
-                MoveFiles(boomhutSourceSnap, boomhutDestinationSnap);
-                MoveFiles(boomhutSourceRecordings, boomhutDestinationRecordings);
-                MoveFiles(garageSourceSnap, garageDestinationSnap);
-                MoveFiles(garageSourceRecordings, garageDestinationRecordings);
+                var moveBoomhutSnap = Task.Run(() => MoveFiles(boomhutSourceSnap, boomhutDestinationSnap));
+                var moveBoomhutRecordings = Task.Run(() => MoveFiles(boomhutSourceRecordings, boomhutDestinationRecordings));
+                var moveGarageSnap = Task.Run(() => MoveFiles(garageSourceSnap, garageDestinationSnap));
+                var moveGarageRecordings = Task.Run(() => MoveFiles(garageSourceRecordings, garageDestinationRecordings));
+
+                await Task.WhenAll(moveBoomhutSnap, moveBoomhutRecordings, moveGarageSnap, moveGarageRecordings);
             }
         }
 

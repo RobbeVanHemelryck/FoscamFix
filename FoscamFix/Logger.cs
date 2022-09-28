@@ -17,6 +17,7 @@ namespace FoscamFix
 
         public void Log(string text)
         {
+            return;
              Console.WriteLine(text);
 
              if (DateTime.Today != _lastDate)

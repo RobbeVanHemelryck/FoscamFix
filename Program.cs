@@ -78,27 +78,37 @@ namespace FoscamFix
 
                 foreach (var group in sourceFiles)
                 {
-                    _logger.Log($"Moving files from {group.Key}");
-                    var date = DateTime.ParseExact(group.Key, "yyyyMMdd", CultureInfo.InvariantCulture);
-                    var groupDestination = Path.Combine(destination, date.ToString("yyyy-MM-dd"));
-                    Directory.CreateDirectory(groupDestination);
-
-                    foreach (var file in group)
+                    try
                     {
-                        try
-                        {
-                            var destinationFileName = Path.Combine(
-                                groupDestination,
-                                TrimFoscamPrefix(Path.GetFileName(file.FileName)));
+                        _logger.Log($"Moving files from {group.Key}");
+                        var date = DateTime.ParseExact(group.Key, "yyyyMMdd", CultureInfo.InvariantCulture);
+                        var groupDestination = Path.Combine(destination, date.ToString("yyyy-MM-dd"));
+                        Directory.CreateDirectory(groupDestination);
 
-                            _logger.Log($"Moving {Path.GetFileName(file.FileName)} to {Path.GetFileName(destinationFileName)}");
-                            File.Move(file.FileName, destinationFileName, true);
-                        }
-                        catch (Exception e)
+                        foreach (var file in group)
                         {
-                            _blacklist.Add(file.FileName);
-                            _logger.Log(e.Message);
+                            try
+                            {
+                                var destinationFileName = Path.Combine(
+                                    groupDestination,
+                                    TrimFoscamPrefix(Path.GetFileName(file.FileName)));
+
+                                _logger.Log($"Moving {Path.GetFileName(file.FileName)} to {Path.GetFileName(destinationFileName)}");
+                                File.Move(file.FileName, destinationFileName, true);
+                            }
+                            catch (Exception e)
+                            {
+                                _blacklist.Add(file.FileName);
+                                _logger.Log(e.Message);
+                            }
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        foreach (var file in group)
+                            _blacklist.Add(file.FileName);
+
+                        _logger.Log(e.Message);
                     }
                 }
             }

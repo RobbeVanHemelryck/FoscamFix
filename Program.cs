@@ -85,23 +85,24 @@ namespace FoscamFix
                         var groupDestination = Path.Combine(destination, date.ToString("yyyy-MM-dd"));
                         Directory.CreateDirectory(groupDestination);
 
-                        foreach (var file in group)
+                        Parallel.ForEach(group, x =>
                         {
                             try
                             {
                                 var destinationFileName = Path.Combine(
                                     groupDestination,
-                                    TrimFoscamPrefix(Path.GetFileName(file.FileName)));
+                                    TrimFoscamPrefix(Path.GetFileName(x.FileName)));
 
-                                _logger.Log($"Moving {Path.GetFileName(file.FileName)} to {Path.GetFileName(destinationFileName)}");
-                                File.Move(file.FileName, destinationFileName, true);
+                                _logger.Log(
+                                    $"Moving {Path.GetFileName(x.FileName)} to {Path.GetFileName(destinationFileName)}");
+                                File.Move(x.FileName, destinationFileName, true);
                             }
                             catch (Exception e)
                             {
-                                _blacklist.Add(file.FileName);
+                                _blacklist.Add(x.FileName);
                                 _logger.Log(e.Message);
                             }
-                        }
+                        });
                     }
                     catch (Exception e)
                     {

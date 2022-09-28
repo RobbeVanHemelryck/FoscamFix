@@ -1,7 +1,15 @@
 {
   "profiles": {
     "FoscamFix": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LogToFile": true,
+        "MoveBoomhutSnap": true,
+        "MoveBoomhutRecording": true,
+        "MoveGarageSnap": true,
+        "MoveGarageRecording": true
+      }
     },
     "WSL 2": {
       "commandName": "WSL2",

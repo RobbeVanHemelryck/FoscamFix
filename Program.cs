@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -30,14 +31,25 @@ namespace FoscamFix
 
             while (true)
             {
-                var moveBoomhutSnap = Task.Run(() => MoveFiles(boomhutSourceSnap, boomhutDestinationSnap));
-                var moveBoomhutRecordings = Task.Run(() => MoveFiles(boomhutSourceRecordings, boomhutDestinationRecordings));
-                var moveGarageSnap = Task.Run(() => MoveFiles(garageSourceSnap, garageDestinationSnap));
-                var moveGarageRecordings = Task.Run(() => MoveFiles(garageSourceRecordings, garageDestinationRecordings));
+                var tasks = new List<Task>();
+                
+                if(bool.Parse(Environment.GetEnvironmentVariable("MoveBoomhutSnap")))
+                    tasks.Add(Task.Run(() => MoveFiles(boomhutSourceSnap, boomhutDestinationSnap)));
+                
+                if(bool.Parse(Environment.GetEnvironmentVariable("MoveBoomhutRecording")))
+                    tasks.Add(Task.Run(() => MoveFiles(boomhutSourceRecordings, boomhutDestinationRecordings)));
+                
+                if(bool.Parse(Environment.GetEnvironmentVariable("MoveGarageSnap")))
+                    tasks.Add(Task.Run(() => MoveFiles(garageSourceSnap, garageDestinationSnap)));
+                
+                if(bool.Parse(Environment.GetEnvironmentVariable("MoveGarageRecording")))
+                    tasks.Add(Task.Run(() => MoveFiles(garageSourceRecordings, garageDestinationRecordings)));
 
-                await Task.WhenAll(moveBoomhutSnap, moveBoomhutRecordings, moveGarageSnap, moveGarageRecordings);
+                await Task.WhenAll(tasks);
             }
         }
+
+        private static HashSet<string> _blacklist = new();
 
         private static void MoveFiles(
             string source,
@@ -51,14 +63,18 @@ namespace FoscamFix
                     return;
                 }
 
-                var sourceFiles = Directory.GetFiles(source)
+                var allFiles = Directory.GetFiles(source);
+                var sourceFiles = allFiles
                     .Select(x => new
                     {
                         DateString = TrimFoscamPrefix(Path.GetFileNameWithoutExtension(x)).Substring(0, "yyyyMMdd".Length),
                         FileName = x
                     })
+                    .Where(x => !_blacklist.Contains(x.FileName))
                     .GroupBy(x => x.DateString)
                     .ToList();
+                
+                _logger.Log($"Moving files from '{source}': {allFiles.Length} total for {source.Length} different days");
 
                 foreach (var group in sourceFiles)
                 {
@@ -75,11 +91,12 @@ namespace FoscamFix
                                 groupDestination,
                                 TrimFoscamPrefix(Path.GetFileName(file.FileName)));
 
-                            _logger.Log($"Moving {file.FileName} to {destinationFileName}");
+                            _logger.Log($"Moving {Path.GetFileName(file.FileName)} to {Path.GetFileName(destinationFileName)}");
                             File.Move(file.FileName, destinationFileName, true);
                         }
                         catch (Exception e)
                         {
+                            _blacklist.Add(file.FileName);
                             _logger.Log(e.Message);
                         }
                     }

@@ -6,13 +6,26 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Hangfire;
 
 namespace FoscamFix
 {
     class Program
     {
         private static Logger _logger = new Logger("/logs");
+
         static async Task Main(string[] args)
+        {
+            RecurringJob.AddOrUpdate(() => Run(), "0 1 * * *");
+
+            using (var server = new BackgroundJobServer())
+            {
+                Console.WriteLine("Hangfire Server started. Press any key to exit...");
+                Console.ReadKey();
+            }
+        }
+        
+        public static async Task Run()
         {
             var boomhutSource = "/cameras/boomhut-source";
             var boomhutDestination = "/cameras/boomhut-destination";
